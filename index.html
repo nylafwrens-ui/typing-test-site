@@ -69,3 +69,87 @@
     <h2>Typing Test</h2>
 
     <label>Choose Test Duration
+       <div id="duration-buttons">
+    <button onclick="startTest(15)">15 Seconds</button>
+    <button onclick="startTest(30)">30 Seconds</button>
+    <button onclick="startTest(60)">60 Seconds</button>
+</div>
+
+<div id="test-area" style="display:none;">
+    <p id="text-to-type"></p>
+    <textarea id="typing-input" placeholder="Start typing here..." oninput="checkTyping()"></textarea>
+    <p id="timer">Time: 0</p>
+</div>
+
+<div id="results" style="display:none;">
+    <h2>Results</h2>
+    <p id="wpm"></p>
+    <p id="accuracy"></p>
+    <button onclick="restartTest()">Restart</button>
+</div>
+
+<script>
+const sentences = [
+    "The quick brown fox jumps over the lazy dog.",
+    "Typing fast takes practice and patience.",
+    "Coding is a powerful skill for the future.",
+    "Nyla is building her own typing test website."
+];
+
+let timeLeft = 0;
+let timerInterval;
+let currentText = "";
+let totalTyped = 0;
+let correctTyped = 0;
+
+function startTest(seconds) {
+    document.getElementById("duration-buttons").style.display = "none";
+    document.getElementById("test-area").style.display = "block";
+
+    currentText = sentences[Math.floor(Math.random() * sentences.length)];
+    document.getElementById("text-to-type").innerText = currentText;
+
+    timeLeft = seconds;
+    document.getElementById("timer").innerText = "Time: " + timeLeft;
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").innerText = "Time: " + timeLeft;
+
+        if (timeLeft <= 0) {
+            endTest();
+        }
+    }, 1000);
+}
+
+function checkTyping() {
+    const input = document.getElementById("typing-input").value;
+    totalTyped = input.length;
+
+    let correct = 0;
+    for (let i = 0; i < input.length; i++) {
+        if (input[i] === currentText[i]) {
+            correct++;
+        }
+    }
+    correctTyped = correct;
+}
+
+function endTest() {
+    clearInterval(timerInterval);
+
+    document.getElementById("test-area").style.display = "none";
+    document.getElementById("results").style.display = "block";
+
+    const wpm = Math.round((correctTyped / 5) / (timeLeft / 60));
+    const accuracy = Math.round((correctTyped / totalTyped) * 100) || 0;
+
+    document.getElementById("wpm").innerText = "WPM: " + wpm;
+    document.getElementById("accuracy").innerText = "Accuracy: " + accuracy + "%";
+}
+
+function restartTest() {
+    location.reload();
+}
+</script>
+ 

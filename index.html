@@ -1,155 +1,674 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Typing Test Website</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f7fa;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Typing Practice & Test</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --text: #111827;
+      --muted: #6b7280;
+      --error: #dc2626;
+      --success: #16a34a;
+    }
 
-        h1, h2 {
-            text-align: center;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        .section {
-            background: white;
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 700px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.05);
-        }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
 
-        textarea {
-            width: 100%;
-            height: 120px;
-            padding: 10px;
-            font-size: 16px;
-        }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
 
-        .stats {
-            margin-top: 10px;
-            font-size: 18px;
-            font-weight: bold;
-        }
+    header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
 
-        button {
-            padding: 10px 20px;
-            background: #007bff;
-            border: none;
-            color: white;
-            border-radius: 5px;
-            margin: 5px;
-            font-size: 16px;
-        }
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
 
-        button:hover {
-            background: #005fcc;
-        }
+    header p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
 
-        select {
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-    </style>
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 1.2rem;
+    }
+
+    .card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .section-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .controls-row label {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      border: 1px solid var(--primary-soft);
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      background: #fff;
+      color: var(--muted);
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .pill.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .pill:hover {
+      border-color: var(--primary);
+    }
+
+    .paragraph-box {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      min-height: 80px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 10px;
+    }
+
+    .paragraph-box span.correct {
+      color: var(--success);
+    }
+
+    .paragraph-box span.incorrect {
+      color: var(--error);
+      text-decoration: underline;
+    }
+
+    .paragraph-box span.current {
+      background: var(--primary-soft);
+    }
+
+    textarea {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      padding: 10px;
+      font-size: 0.95rem;
+      resize: vertical;
+      min-height: 80px;
+      outline: none;
+      transition: 0.15s;
+    }
+
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary-soft);
+    }
+
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 0.85rem;
+    }
+
+    .stat-pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: var(--muted);
+    }
+
+    .stat-pill strong {
+      color: var(--text);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: var(--primary);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.15s;
+    }
+
+    button.secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .timer {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .lessons-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .lesson-item {
+      padding: 10px;
+      border-radius: 8px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      font-size: 0.9rem;
+    }
+
+    .lesson-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-tab {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: #fff;
+      color: var(--muted);
+    }
+
+    .nav-tab.active {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .section-hidden {
+      display: none;
+    }
+
+    .ad-slot {
+      margin-top: 16px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px dashed #d1d5db;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+      background: #f9fafb;
+    }
+  </style>
 </head>
 <body>
+  <div class="page">
+    <header>
+      <h1>Typing Practice & Speed Test</h1>
+      <p>Practice typing, test your speed, and learn better technique — all in one place.</p>
+    </header>
 
-<h1>Typing Test Website</h1>
+    <!-- TOP: MAIN TYPING TEST -->
+    <div class="card" id="test-card">
+      <h2>Typing Test</h2>
+      <p>Choose a duration and difficulty, then start typing to measure your WPM and accuracy.</p>
 
-<!-- TYPING TEST SECTION -->
-<div class="section">
-    <h2>Typing Test</h2>
+      <div class="controls-row">
+        <div>
+          <div class="section-title">Duration</div>
+          <div class="pill-group" id="duration-group">
+            <button class="pill active" data-seconds="30">30s</button>
+            <button class="pill" data-seconds="60">60s</button>
+            <button class="pill" data-seconds="120">120s</button>
+          </div>
+        </div>
+        <div>
+          <div class="section-title">Difficulty</div>
+          <div class="pill-group" id="difficulty-group-test">
+            <button class="pill active" data-level="easy">Easy</button>
+            <button class="pill" data-level="medium">Medium</button>
+            <button class="pill" data-level="hard">Hard</button>
+          </div>
+        </div>
+      </div>
 
-    <label>Choose Test Duration
-       <div id="duration-buttons">
-    <button onclick="startTest(15)">15 Seconds</button>
-    <button onclick="startTest(30)">30 Seconds</button>
-    <button onclick="startTest(60)">60 Seconds</button>
-</div>
+      <div class="paragraph-box" id="test-text"></div>
 
-<div id="test-area" style="display:none;">
-    <p id="text-to-type"></p>
-    <textarea id="typing-input" placeholder="Start typing here..." oninput="checkTyping()"></textarea>
-    <p id="timer">Time: 0</p>
-</div>
+      <textarea
+        id="test-input"
+        placeholder="Press Start, then begin typing here..."
+        disabled
+      ></textarea>
 
-<div id="results" style="display:none;">
-    <h2>Results</h2>
-    <p id="wpm"></p>
-    <p id="accuracy"></p>
-    <button onclick="restartTest()">Restart</button>
-</div>
+      <div class="stats-row">
+        <div class="stat-pill"><strong>Time:</strong> <span class="timer" id="timer-display">0s</span></div>
+        <div class="stat-pill"><strong>WPM:</strong> <span id="test-wpm">0</span></div>
+        <div class="stat-pill"><strong>Accuracy:</strong> <span id="test-accuracy">0%</span></div>
+        <div class="stat-pill"><strong>Errors:</strong> <span id="test-errors">0</span></div>
+      </div>
 
-<script>
-const sentences = [
-    "The quick brown fox jumps over the lazy dog.",
-    "Typing fast takes practice and patience.",
-    "Coding is a powerful skill for the future.",
-    "Nyla is building her own typing test website."
-];
+      <div class="btn-row">
+        <button id="start-test-btn">Start Test</button>
+        <button class="secondary" id="reset-test-btn">Reset</button>
+      </div>
+    </div>
 
-let timeLeft = 0;
-let timerInterval;
-let currentText = "";
-let totalTyped = 0;
-let correctTyped = 0;
+    <div class="layout" style="margin-top: 16px;">
+      <!-- LEFT: PRACTICE & LESSONS -->
+      <div class="card">
+        <div class="nav-tabs">
+          <button class="nav-tab active" data-target="practice-section">Typing Practice</button>
+          <button class="nav-tab" data-target="lessons-section">Typing Lessons</button>
+        </div>
 
-function startTest(seconds) {
-    document.getElementById("duration-buttons").style.display = "none";
-    document.getElementById("test-area").style.display = "block";
+        <!-- PRACTICE SECTION -->
+        <div id="practice-section">
+          <h2>Typing Practice</h2>
+          <p>Practice freely with no timer. Focus on accuracy and rhythm.</p>
 
-    currentText = sentences[Math.floor(Math.random() * sentences.length)];
-    document.getElementById("text-to-type").innerText = currentText;
+          <div class="controls-row">
+            <div>
+              <div class="section-title">Difficulty</div>
+              <div class="pill-group" id="difficulty-group-practice">
+                <button class="pill active" data-level="easy">Easy</button>
+                <button class="pill" data-level="medium">Medium</button>
+                <button class="pill" data-level="hard">Hard</button>
+              </div>
+            </div>
+          </div>
 
-    timeLeft = seconds;
-    document.getElementById("timer").innerText = "Time: " + timeLeft;
+          <div class="paragraph-box" id="practice-text"></div>
 
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById("timer").innerText = "Time: " + timeLeft;
+          <textarea
+            id="practice-input"
+            placeholder="Start typing to practice..."
+          ></textarea>
 
-        if (timeLeft <= 0) {
-            endTest();
-        }
-    }, 1000);
-}
+          <div class="stats-row">
+            <div class="stat-pill"><strong>WPM:</strong> <span id="practice-wpm">0</span></div>
+            <div class="stat-pill"><strong>Accuracy:</strong> <span id="practice-accuracy">0%</span></div>
+            <div class="stat-pill"><strong>Errors:</strong> <span id="practice-errors">0</span></div>
+          </div>
 
-function checkTyping() {
-    const input = document.getElementById("typing-input").value;
-    totalTyped = input.length;
+          <div class="btn-row">
+            <button class="secondary" id="new-practice-text-btn">New Paragraph</button>
+            <button class="secondary" id="clear-practice-btn">Clear</button>
+          </div>
+        </div>
 
-    let correct = 0;
-    for (let i = 0; i < input.length; i++) {
-        if (input[i] === currentText[i]) {
-            correct++;
-        }
+        <!-- LESSONS SECTION -->
+        <div id="lessons-section" class="section-hidden">
+          <h2>Typing Lessons <span class="badge">Beginner Friendly</span></h2>
+          <p>Short lessons to build good habits: accuracy first, speed later.</p>
+
+          <div class="lessons-list">
+            <div class="lesson-item">
+              <strong>Lesson 1: Home Row & Finger Placement</strong>
+              <span>Place your index fingers on the F and J keys (they usually have small bumps). Keep your other fingers resting on A–S–D–F and J–K–L–; with thumbs on the spacebar. Return to this position after every key press.</span>
+            </div>
+            <div class="lesson-item">
+              <strong>Lesson 2: Accuracy Before Speed</strong>
+              <span>Type slowly and focus on hitting the correct keys. It’s better to type 20 WPM at 98% accuracy than 50 WPM at 70%. Speed will naturally increase as your fingers learn the patterns.</span>
+            </div>
+            <div class="lesson-item">
+              <strong>Lesson 3: Short Daily Practice</strong>
+              <span>Practice 10–15 minutes a day instead of one long session once a week. Use the practice section to warm up, then take a short test to measure progress.</span>
+            </div>
+            <div class="lesson-item">
+              <strong>Lesson 4: Gradual Difficulty</strong>
+              <span>Start with easy sentences, then move to medium and hard. Harder text usually has punctuation, numbers, or uncommon words. Don’t rush—move up only when you feel comfortable.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: AD SLOT / EXTRA INFO -->
+      <div class="card">
+        <h2>Focus Area</h2>
+        <p>Use this space for tips, reminders, or ads without interrupting typing.</p>
+        <div class="ad-slot">
+          Ad space / tips area  
+          <br />Place display ads or helpful messages here without covering the typing area.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- TEXT DATA ----------
+    const texts = {
+      easy: [
+        "Typing is a useful skill that gets better with practice.",
+        "Stay relaxed and focus on each word as you type.",
+        "Accuracy is more important than speed when you are learning."
+      ],
+      medium: [
+        "Consistent daily practice will slowly improve your typing speed and confidence.",
+        "Try to keep your eyes on the screen instead of the keyboard while typing.",
+        "Good posture and hand position can reduce strain and help you type more comfortably."
+      ],
+      hard: [
+        "Developing strong typing skills requires patience, discipline, and a willingness to correct your mistakes.",
+        "Complex sentences with punctuation, numbers, and symbols will challenge your accuracy and focus.",
+        "As your typing improves, you can handle longer passages without losing rhythm or precision."
+      ]
+    };
+
+    // ---------- HELPERS ----------
+    function pickRandom(level) {
+      const arr = texts[level] || texts.easy;
+      return arr[Math.floor(Math.random() * arr.length)];
     }
-    correctTyped = correct;
-}
 
-function endTest() {
-    clearInterval(timerInterval);
+    function renderTextWithHighlight(container, text, typed) {
+      container.innerHTML = "";
+      for (let i = 0; i < text.length; i++) {
+        const span = document.createElement("span");
+        const char = text[i];
+        span.textContent = char;
 
-    document.getElementById("test-area").style.display = "none";
-    document.getElementById("results").style.display = "block";
+        if (i < typed.length) {
+          if (typed[i] === char) {
+            span.classList.add("correct");
+          } else {
+            span.classList.add("incorrect");
+          }
+        } else if (i === typed.length) {
+          span.classList.add("current");
+        }
 
-    const wpm = Math.round((correctTyped / 5) / (timeLeft / 60));
-    const accuracy = Math.round((correctTyped / totalTyped) * 100) || 0;
+        container.appendChild(span);
+      }
+    }
 
-    document.getElementById("wpm").innerText = "WPM: " + wpm;
-    document.getElementById("accuracy").innerText = "Accuracy: " + accuracy + "%";
-}
+    function calculateStats(text, typed, elapsedSeconds) {
+      let correct = 0;
+      let errors = 0;
+      const len = Math.min(text.length, typed.length);
 
-function restartTest() {
-    location.reload();
-}
-</script>
+      for (let i = 0; i < len; i++) {
+        if (typed[i] === text[i]) correct++;
+        else errors++;
+      }
+      errors += Math.max(0, typed.length - text.length);
+
+      const accuracy = typed.length === 0 ? 0 : Math.round((correct / typed.length) * 100);
+
+      const minutes = elapsedSeconds > 0 ? elapsedSeconds / 60 : 1;
+      const wpm = Math.round((typed.length / 5) / minutes);
+
+      return { wpm: isNaN(wpm) ? 0 : wpm, accuracy: isNaN(accuracy) ? 0 : accuracy, errors };
+    }
+
+    // ---------- TEST LOGIC ----------
+    const durationGroup = document.getElementById("duration-group");
+    const difficultyGroupTest = document.getElementById("difficulty-group-test");
+    const testTextEl = document.getElementById("test-text");
+    const testInput = document.getElementById("test-input");
+    const timerDisplay = document.getElementById("timer-display");
+    const testWpmEl = document.getElementById("test-wpm");
+    const testAccuracyEl = document.getElementById("test-accuracy");
+    const testErrorsEl = document.getElementById("test-errors");
+    const startTestBtn = document.getElementById("start-test-btn");
+    const resetTestBtn = document.getElementById("reset-test-btn");
+
+    let testDuration = 30;
+    let testDifficulty = "easy";
+    let testText = "";
+    let testTimer = null;
+    let testStartTime = null;
+    let testRemaining = 0;
+
+    durationGroup.addEventListener("click", (e) => {
+      if (e.target.classList.contains("pill")) {
+        [...durationGroup.children].forEach((p) => p.classList.remove("active"));
+        e.target.classList.add("active");
+        testDuration = parseInt(e.target.dataset.seconds, 10);
+      }
+    });
+
+    difficultyGroupTest.addEventListener("click", (e) => {
+      if (e.target.classList.contains("pill")) {
+        [...difficultyGroupTest.children].forEach((p) => p.classList.remove("active"));
+        e.target.classList.add("active");
+        testDifficulty = e.target.dataset.level;
+      }
+    });
+
+    function startTest() {
+      testText = pickRandom(testDifficulty);
+      testInput.value = "";
+      testInput.disabled = false;
+      testInput.focus();
+      testRemaining = testDuration;
+      testStartTime = Date.now();
+
+      renderTextWithHighlight(testTextEl, testText, "");
+      timerDisplay.textContent = testRemaining + "s";
+      testWpmEl.textContent = "0";
+      testAccuracyEl.textContent = "0%";
+      testErrorsEl.textContent = "0";
+
+      if (testTimer) clearInterval(testTimer);
+      testTimer = setInterval(() => {
+        testRemaining--;
+        if (testRemaining <= 0) {
+          testRemaining = 0;
+          endTest();
+        }
+        timerDisplay.textContent = testRemaining + "s";
+
+        const elapsed = (Date.now() - testStartTime) / 1000;
+        const stats = calculateStats(testText, testInput.value, elapsed);
+        testWpmEl.textContent = stats.wpm;
+        testAccuracyEl.textContent = stats.accuracy + "%";
+        testErrorsEl.textContent = stats.errors;
+      }, 1000);
+    }
+
+    function endTest() {
+      clearInterval(testTimer);
+      testTimer = null;
+      testInput.disabled = true;
+      const elapsed = (Date.now() - testStartTime) / 1000;
+      const stats = calculateStats(testText, testInput.value, elapsed);
+      testWpmEl.textContent = stats.wpm;
+      testAccuracyEl.textContent = stats.accuracy + "%";
+      testErrorsEl.textContent = stats.errors;
+    }
+
+    testInput.addEventListener("input", () => {
+      renderTextWithHighlight(testTextEl, testText, testInput.value);
+    });
+
+    startTestBtn.addEventListener("click", () => {
+      startTest();
+    });
+
+    resetTestBtn.addEventListener("click", () => {
+      if (testTimer) clearInterval(testTimer);
+      testTimer = null;
+      testInput.value = "";
+      testInput.disabled = true;
+      testTextEl.textContent = "";
+      timerDisplay.textContent = "0s";
+      testWpmEl.textContent = "0";
+      testAccuracyEl.textContent = "0%";
+      testErrorsEl.textContent = "0";
+    });
+
+    // ---------- PRACTICE LOGIC ----------
+    const difficultyGroupPractice = document.getElementById("difficulty-group-practice");
+    const practiceTextEl = document.getElementById("practice-text");
+    const practiceInput = document.getElementById("practice-input");
+    const practiceWpmEl = document.getElementById("practice-wpm");
+    const practiceAccuracyEl = document.getElementById("practice-accuracy");
+    const practiceErrorsEl = document.getElementById("practice-errors");
+    const newPracticeTextBtn = document.getElementById("new-practice-text-btn");
+    const clearPracticeBtn = document.getElementById("clear-practice-btn");
+
+    let practiceDifficulty = "easy";
+    let practiceText = pickRandom(practiceDifficulty);
+    let practiceStartTime = null;
+
+    function loadPracticeText() {
+      practiceText = pickRandom(practiceDifficulty);
+      practiceInput.value = "";
+      practiceStartTime = null;
+      practiceWpmEl.textContent = "0";
+      practiceAccuracyEl.textContent = "0%";
+      practiceErrorsEl.textContent = "0";
+      renderTextWithHighlight(practiceTextEl, practiceText, "");
+    }
+
+    difficultyGroupPractice.addEventListener("click", (e) => {
+      if (e.target.classList.contains("pill")) {
+        [...difficultyGroupPractice.children].forEach((p) => p.classList.remove("active"));
+        e.target.classList.add("active");
+        practiceDifficulty = e.target.dataset.level;
+        loadPracticeText();
+      }
+    });
+
+    practiceInput.addEventListener("input", () => {
+      if (!practiceStartTime) {
+        practiceStartTime = Date.now();
+      }
+      const elapsed = (Date.now() - practiceStartTime) / 1000;
+      const stats = calculateStats(practiceText, practiceInput.value, elapsed || 1);
+      practiceWpmEl.textContent = stats.wpm;
+      practiceAccuracyEl.textContent = stats.accuracy + "%";
+      practiceErrorsEl.textContent = stats.errors;
+      renderTextWithHighlight(practiceTextEl, practiceText, practiceInput.value);
+    });
+
+    newPracticeTextBtn.addEventListener("click", () => {
+      loadPracticeText();
+      practiceInput.focus();
+    });
+
+    clearPracticeBtn.addEventListener("click", () => {
+      practiceInput.value = "";
+      practiceStartTime = null;
+      practiceWpmEl.textContent = "0";
+      practiceAccuracyEl.textContent = "0%";
+      practiceErrorsEl.textContent = "0";
+      renderTextWithHighlight(practiceTextEl, practiceText, "");
+      practiceInput.focus();
+    });
+
+    // ---------- NAV TABS ----------
+    const navTabs = document.querySelectorAll(".nav-tab");
+    const practiceSection = document.getElementById("practice-section");
+    const lessonsSection = document.getElementById("lessons-section");
+
+    navTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        navTabs.forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        const target = tab.dataset.target;
+        if (target === "practice-section") {
+          practiceSection.classList.remove("section-hidden");
+          lessonsSection.classList.add("section-hidden");
+        } else {
+          lessonsSection.classList.remove("section-hidden");
+          practiceSection.classList.add("section-hidden");
+        }
+      });
+    });
+
+    // ---------- INITIALIZE ----------
+    loadPracticeText();
+  </script>
+</body>
+</html>
+
  
